@@ -106,7 +106,7 @@
 class SSD1306 {
 public:
     SSD1306(int8_t address = SSD1306_I2C_ADDRESS);
-    SSD1306(const SSD1306& orig);
+    SSD1306(const SSD1306& orig) = delete;
     virtual ~SSD1306();
 
     void begin(unsigned int switchvcc = SSD1306_SWITCHCAPVCC);
@@ -119,8 +119,10 @@ public:
     void drawChar(int x, int y, unsigned char c, int color, int size);
     void fillRect(int x, int y, int w, int h, int fillcolor);
     void drawFastHLine(int x, int y, int w, unsigned int color);
+    
     void write(char c);
-    void write(char *str);
+    void write(const char *str);
+    void write(const std::string &str);
 
 private:
 
@@ -131,10 +133,8 @@ private:
     int cursor_y;
     int cursor_x;
     int s;
-    int buffer[1024];
+    int pixel[1024];
 
-
-    void commande(int8_t c);
     void swap(int &x, int &y);
 
 };

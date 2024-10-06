@@ -12,32 +12,37 @@
 
 using namespace std;
 
-
 int main(int argc, char** argv) {
+
+    try {
+        
+        SSD1306 oled;
+
+        cout << "test unitaire ssd1306" << endl;
+        
+        oled.begin();
+        oled.setTextSize(2);
+
+        char car = 'A';
+        for (int i = 0; i < 26; i++) {
+            oled.write(car);
+            car++;
+        }
+        oled.display();
+
+        sleep(5);
+
+        oled.clear();
+
+        oled.write("Philippe\n(F4JRE)");
+        oled.display();
+    }  
     
-    SSD1306 oled;
     
-    cout << "test unitaire ssd1306" << endl;
-    oled.begin();
-    oled.clear();
-    oled.setTextSize(2);
-    
-    char car = 'A';
-    for (int i=0; i<26; i++){      
-        oled.write(car);
-        car++;
+    catch (const std::runtime_error &e) {
+        
+        cout << "Exception caught: " << e.what() << endl;
     }
-    oled.display();
-    
-    sleep(3);
-    
-    oled.clear();
-    oled.write("Philippe\nF4JRE");
-    oled.display();
-
-    
-    
-
     
     return 0;
 }

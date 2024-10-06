@@ -18,10 +18,10 @@ s(1) {
 
         throw std::runtime_error("Exception in constructor SSD1306");
     }
+    memset(pixel, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8) * sizeof (int));
 }
 
-SSD1306::SSD1306(const SSD1306 & orig) {
-}
+
 
 SSD1306::~SSD1306() {
     if (deviceI2C != nullptr)
@@ -33,114 +33,110 @@ void SSD1306::begin(unsigned int switchvcc) {
     vccstate = switchvcc;
 
     // Init sequence
-    commande(SSD1306_DISPLAYOFF); // 0xAE
-    commande(SSD1306_SETDISPLAYCLOCKDIV); // 0xD5
-    commande(0x80); // the suggested ratio 0x80
-    commande(SSD1306_SETMULTIPLEX); // 0xA8
-    commande(SSD1306_LCDHEIGHT - 1);
-    commande(SSD1306_SETDISPLAYOFFSET); // 0xD3
-    commande(0x0); // no offset
-    commande(SSD1306_SETSTARTLINE | 0x0); // line #0
-    commande(SSD1306_CHARGEPUMP); // 0x8D
+    deviceI2C->WriteReg8(0x00,SSD1306_DISPLAYOFF); // 0xAE
+    deviceI2C->WriteReg8(0x00,SSD1306_SETDISPLAYCLOCKDIV); // 0xD5
+    deviceI2C->WriteReg8(0x00,0x80); // the suggested ratio 0x80
+    deviceI2C->WriteReg8(0x00,SSD1306_SETMULTIPLEX); // 0xA8
+    deviceI2C->WriteReg8(0x00,SSD1306_LCDHEIGHT - 1);
+    deviceI2C->WriteReg8(0x00,SSD1306_SETDISPLAYOFFSET); // 0xD3
+    deviceI2C->WriteReg8(0x00,0x0); // no offset
+    deviceI2C->WriteReg8(0x00,SSD1306_SETSTARTLINE | 0x0); // line #0
+    deviceI2C->WriteReg8(0x00,SSD1306_CHARGEPUMP); // 0x8D
     if (vccstate == SSD1306_EXTERNALVCC) {
-        commande(0x10);
+        deviceI2C->WriteReg8(0x00,0x10);
     } else {
-        commande(0x14);
+        deviceI2C->WriteReg8(0x00,0x14);
     }
-    commande(SSD1306_MEMORYMODE); // 0x20
-    commande(0x00); // 0x0 act like ks0108
-    commande(SSD1306_SEGREMAP | 0x1);
-    commande(SSD1306_COMSCANDEC);
+    deviceI2C->WriteReg8(0x00,SSD1306_MEMORYMODE); // 0x20
+    deviceI2C->WriteReg8(0x00,0x00); // 0x0 act like ks0108
+    deviceI2C->WriteReg8(0x00,SSD1306_SEGREMAP | 0x1);
+    deviceI2C->WriteReg8(0x00,SSD1306_COMSCANDEC);
 
 #if defined SSD1306_128_32
-    commande(SSD1306_SETCOMPINS); // 0xDA
-    commande(0x02);
-    commande(SSD1306_SETCONTRAST); // 0x81
-    commande(0x8F);
+    deviceI2C->WriteReg8(0x00,SSD1306_SETCOMPINS); // 0xDA
+    deviceI2C->WriteReg8(0x00,0x02);
+    deviceI2C->WriteReg8(0x00,SSD1306_SETCONTRAST); // 0x81
+    deviceI2C->WriteReg8(0x00,0x8F);
 
 #elif defined SSD1306_128_64
-    commande(SSD1306_SETCOMPINS); // 0xDA
-    commande(0x12);
-    commande(SSD1306_SETCONTRAST); // 0x81
+    deviceI2C->WriteReg8(0x00,SSD1306_SETCOMPINS); // 0xDA
+    deviceI2C->WriteReg8(0x00,0x12);
+    deviceI2C->WriteReg8(0x00,SSD1306_SETCONTRAST); // 0x81
     if (vccstate == SSD1306_EXTERNALVCC) {
-        commande(0x9F);
+        deviceI2C->WriteReg8(0x00,0x9F);
     } else {
-        commande(0xCF);
+        deviceI2C->WriteReg8(0x00,0xCF);
     }
 
 #elif defined SSD1306_96_16
-    commande(SSD1306_SETCOMPINS); // 0xDA
-    commande(0x2); // ada x12
-    commande(SSD1306_SETCONTRAST); // 0x81
+    deviceI2C->WriteReg8(0x00,SSD1306_SETCOMPINS); // 0xDA
+    deviceI2C->WriteReg8(0x00,0x2); // ada x12
+    deviceI2C->WriteReg8(0x00,SSD1306_SETCONTRAST); // 0x81
     if (vccstate == SSD1306_EXTERNALVCC) {
-        commande(0x10);
+        deviceI2C->WriteReg8(0x00,0x10);
     } else {
-        commande(0xAF);
+        deviceI2C->WriteReg8(0x00,0xAF);
     }
 
 #endif
-    commande(SSD1306_SETPRECHARGE); // 0xd9
+    deviceI2C->WriteReg8(0x00,SSD1306_SETPRECHARGE); // 0xd9
     if (vccstate == SSD1306_EXTERNALVCC) {
-        commande(0x22);
+        deviceI2C->WriteReg8(0x00,0x22);
     } else {
-        commande(0xF1);
+        deviceI2C->WriteReg8(0x00,0xF1);
     }
-    commande(SSD1306_SETVCOMDETECT); // 0xDB
-    commande(0x40);
-    commande(SSD1306_DISPLAYALLON_RESUME); // 0xA4
-    commande(SSD1306_NORMALDISPLAY); // 0xA6
-    commande(SSD1306_DEACTIVATE_SCROLL);
-    commande(SSD1306_DISPLAYON); // --turn on oled panel
+    deviceI2C->WriteReg8(0x00,SSD1306_SETVCOMDETECT); // 0xDB
+    deviceI2C->WriteReg8(0x00,0x40);
+    deviceI2C->WriteReg8(0x00,SSD1306_DISPLAYALLON_RESUME); // 0xA4
+    deviceI2C->WriteReg8(0x00,SSD1306_NORMALDISPLAY); // 0xA6
+    deviceI2C->WriteReg8(0x00,SSD1306_DEACTIVATE_SCROLL);
+    deviceI2C->WriteReg8(0x00,SSD1306_DISPLAYON); // --turn on oled panel
 
 }
 
-void SSD1306::commande(int8_t c) {
 
-    deviceI2C->WriteReg8(0x00, c);
-
-}
 
 /**
  * @brief  clear everything
  */
 void SSD1306::clear() {
-    memset(buffer, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8) * sizeof (int));
+    memset(pixel, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8) * sizeof (int));
     cursor_y = 0;
     cursor_x = 0;
 }
 
 void SSD1306::invert(unsigned int i) {
     if (i) {
-        commande(SSD1306_INVERTDISPLAY);
+        deviceI2C->WriteReg8(0x00,SSD1306_INVERTDISPLAY);
     } else {
-        commande(SSD1306_NORMALDISPLAY);
+        deviceI2C->WriteReg8(0x00,SSD1306_NORMALDISPLAY);
     }
 }
 
 void SSD1306::display() {
 
-    commande(SSD1306_COLUMNADDR);
-    commande(0); // Column start address (0 = reset)
-    commande(SSD1306_LCDWIDTH - 1); // Column end address (127 
+    deviceI2C->WriteReg8(0x00,SSD1306_COLUMNADDR);
+    deviceI2C->WriteReg8(0x00,0); // Column start address (0 = reset)
+    deviceI2C->WriteReg8(0x00,SSD1306_LCDWIDTH - 1); // Column end address (127 
     // = reset)
 
-    commande(SSD1306_PAGEADDR);
-    commande(0); // Page start address (0 = reset)
+    deviceI2C->WriteReg8(0x00,SSD1306_PAGEADDR);
+    deviceI2C->WriteReg8(0x00,0); // Page start address (0 = reset)
 #if SSD1306_LCDHEIGHT == 64
-    commande(7); // Page end address
+    deviceI2C->WriteReg8(0x00,7); // Page end address
 #endif
 #if SSD1306_LCDHEIGHT == 32
-    commande(3); // Page end address
+    deviceI2C->WriteReg8(0x00,3); // Page end address
 #endif
 #if SSD1306_LCDHEIGHT == 16
-    commande(1); // Page end address
+    deviceI2C->WriteReg8(0x00,1); // Page end address
 #endif
 
-    // I2C
-    int i;
-    for (i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++) {
-        deviceI2C->WriteReg8(0x40, buffer[i]);
+    
+    for (int i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++) {
+        deviceI2C->WriteReg8(0x40, pixel[i]);
     }
+    
 
 }
 
@@ -169,13 +165,13 @@ void SSD1306::drawPixel(int x, int y, unsigned int color) {
     // x is which column
     switch (color) {
         case WHITE:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] |= (1 << (y & 7));
+            pixel[x + (y / 8) * SSD1306_LCDWIDTH] |= (1 << (y & 7));
             break;
         case BLACK:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
+            pixel[x + (y / 8) * SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
             break;
         case INVERSE:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] ^= (1 << (y & 7));
+            pixel[x + (y / 8) * SSD1306_LCDWIDTH] ^= (1 << (y & 7));
             break;
     }
 
@@ -277,7 +273,7 @@ void SSD1306::drawFastHLine(int x, int y, int w, unsigned int color) {
         return;
     }
     // set up the pointer for movement through the buffer
-    int *pBuf = buffer;
+    int *pBuf = pixel;
     // adjust the buffer pointer for the current row
     pBuf += ((y / 8) * SSD1306_LCDWIDTH);
     // and offset x columns in
@@ -324,10 +320,15 @@ void SSD1306::write(char c) {
 
 }
 
-void SSD1306::write(char *str) {
+void SSD1306::write(const char *str) {
 
     int i, end;
     end = strlen(str);
     for (i = 0; i < end; i++)
         write(str[i]);
+}
+
+void SSD1306::write(const std::string &str){
+    write(str.c_str());
+    
 }
