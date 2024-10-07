@@ -8,7 +8,9 @@
 
 #include <iostream>
 #include "i2c.h"
-#include <string.h>
+#include <cstring>        // Nécessaire pour utiliser memset
+#include <sstream>
+#include <iomanip>
 #include "oled_fonts.h"
 
 #define SSD1306_I2C_ADDRESS   0x3C
@@ -113,16 +115,25 @@ public:
     void clear();
     void invert(unsigned int i);
     void display();
-    
+       
     void drawPixel(int x, int y, unsigned int color);
-    void setTextSize(int _s);
+    void setTextSize(int _size);
     void drawChar(int x, int y, unsigned char c, int color, int size);
     void fillRect(int x, int y, int w, int h, int fillcolor);
     void drawFastHLine(int x, int y, int w, unsigned int color);
     
-    void write(char c);
+    void write(const char c);
     void write(const char *str);
     void write(const std::string &str);
+    void write(const int n);
+    void write(const double n);
+    
+    void scrollRight(unsigned int start, unsigned int stop);
+    void scrollLeft(unsigned int start, unsigned int stop);
+    void scrollStop(void);
+
+    
+    
 
 private:
 
@@ -132,8 +143,9 @@ private:
     int vccstate;
     int cursor_y;
     int cursor_x;
-    int s;
-    int pixel[1024];
+    int size;
+    int pixel[1024];    // Tableau des pixels
+    std::string buffer; // Buffer des caractères
 
     void swap(int &x, int &y);
 

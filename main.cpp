@@ -30,12 +30,13 @@ int main(int argc, char** argv) {
         }
         oled.display();
 
-        sleep(5);
+        sleep(3);
 
         oled.clear();
-
-        oled.write("Philippe\n(F4JRE)");
+        oled.write("Philippe\n(F4JRE)\n");
+        oled.write(1960);
         oled.display();
+        oled.scrollLeft(00,0x0F);       
     }  
     
     
