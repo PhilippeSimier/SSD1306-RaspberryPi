@@ -13,8 +13,8 @@ presence(false),
 vccstate(SSD1306_SWITCHCAPVCC),
 cursor_y(0),
 cursor_x(0),
-size(1),
-buffer("") {
+size(1)
+ {
     if (deviceI2C->getError()) {
 
         throw std::runtime_error("Exception in constructor SSD1306");
@@ -371,4 +371,53 @@ void SSD1306::write(const double f) {
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2) << f;
     write(ss.str());
+}
+
+SSD1306& SSD1306::operator<<(SSD1306& (*fp)(SSD1306&)){
+    return (*fp)(*this);
+}
+
+SSD1306& SSD1306::operator<<(const std::string& str){
+        
+    write(str);
+    return *this;
+}
+
+SSD1306& SSD1306::operator<<(const int n){
+    write(n);
+    return *this;
+}
+
+SSD1306& SSD1306::operator<<(const double x){
+    write(x);
+    return *this;
+}
+
+SSD1306& SSD1306::operator<<(const char c){
+    write(c);
+    return *this;
+}
+
+SSD1306& SSD1306::operator<<(const char * str){
+    
+    write(str);
+    return *this;
+}
+    
+SSD1306& SSD1306::operator<<(const bool b){
+    
+    write(std::to_string(b));
+    return *this;
+}
+
+SSD1306& display(SSD1306& sx){
+      
+    sx.display();
+    sx.clear();
+    return sx;
+}
+
+SSD1306& clear(SSD1306& sx){
+    sx.clear();
+    return sx;
 }

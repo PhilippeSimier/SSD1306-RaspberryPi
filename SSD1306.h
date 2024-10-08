@@ -131,10 +131,16 @@ public:
     void scrollRight(unsigned int start, unsigned int stop);
     void scrollLeft(unsigned int start, unsigned int stop);
     void scrollStop(void);
-
     
-    
-
+    SSD1306& operator<<(SSD1306& (*)(SSD1306&));
+    SSD1306& operator<<(const std::string&);
+    SSD1306& operator<<(const int);
+    SSD1306& operator<<(const double);
+    SSD1306& operator<<(const char);
+    SSD1306& operator<<(const char *);
+    SSD1306& operator<<(const bool);
+       
+   
 private:
 
     i2c *deviceI2C; // file descriptor
@@ -145,9 +151,11 @@ private:
     int cursor_x;
     int size;
     int pixel[1024];    // Tableau des pixels
-    std::string buffer; // Buffer des caractères
+    
 
     void swap(int &x, int &y);
 
 };
 
+SSD1306& display(SSD1306& sx);
+SSD1306& clear(SSD1306& sx);

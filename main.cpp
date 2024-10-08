@@ -31,12 +31,12 @@ int main(int argc, char** argv) {
         oled.display();
 
         sleep(3);
-
-        oled.clear();
-        oled.write("Philippe\n(F4JRE)\n");
-        oled.write(1960);
-        oled.display();
-        oled.scrollLeft(00,0x0F);       
+        
+        oled << clear << "Philippe\n(F4JRE)\n" << display;
+        oled.scrollLeft(00,0x0F);
+        sleep(3);
+        oled << 1960 << '\n' << 3.14 << '\n' << true << display;
+               
     }  
     
     
