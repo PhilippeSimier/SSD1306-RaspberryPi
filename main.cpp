@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
         
         oled.begin();
         oled.setTextSize(2);
+        oled.flipScreenVertically();
 
         char car = 'A';
         for (int i = 0; i < 26; i++) {
@@ -34,8 +35,14 @@ int main(int argc, char** argv) {
         
         oled << clear << "Philippe\n(F4JRE)\n" << display;
         oled.scrollLeft(00,0x0F);
+        
         sleep(3);
+        oled.scrollStop();
         oled << 1960 << '\n' << 3.14 << '\n' << true << display;
+        sleep(3);
+        oled.setCursor(10,10);
+        oled.setTextSize(3);
+        oled << "BTS\nCIEL" << display;
                
     }  
     

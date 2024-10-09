@@ -98,7 +98,7 @@
 #define SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
-#define rotation 0
+//#define rotation 2
 #define BLACK 0
 #define WHITE 1
 #define INVERSE 2
@@ -115,6 +115,8 @@ public:
     void clear();
     void invert(unsigned int i);
     void display();
+    void flipScreenVertically();
+    void setCursor(const int x, const int y);
        
     void drawPixel(int x, int y, unsigned int color);
     void setTextSize(int _size);
@@ -150,6 +152,8 @@ private:
     int cursor_y;
     int cursor_x;
     int size;
+    int interligne;
+    int rotation;
     int pixel[1024];    // Tableau des pixels
     
 

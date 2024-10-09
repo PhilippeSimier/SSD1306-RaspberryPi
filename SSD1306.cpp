@@ -11,10 +11,11 @@ SSD1306::SSD1306(int8_t address) :
 deviceI2C(new i2c(address)),
 presence(false),
 vccstate(SSD1306_SWITCHCAPVCC),
-cursor_y(0),
-cursor_x(0),
-size(1)
- {
+cursor_y(1),
+cursor_x(1),
+size(1),
+interligne(4),
+rotation(0) {
     if (deviceI2C->getError()) {
 
         throw std::runtime_error("Exception in constructor SSD1306");
@@ -99,8 +100,8 @@ void SSD1306::begin(unsigned int switchvcc) {
  */
 void SSD1306::clear() {
     memset(pixel, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8) * sizeof (int));
-    cursor_y = 0;
-    cursor_x = 0;
+    cursor_y = 1;
+    cursor_x = 1;
 }
 
 void SSD1306::invert(unsigned int i) {
@@ -136,8 +137,17 @@ void SSD1306::display() {
     }
 }
 
+void SSD1306::flipScreenVertically() {
+    rotation = 2;
+}
+
+void SSD1306::setCursor(const int x, const int y) {
+    cursor_x = x;
+    cursor_y = y;
+}
+
 void SSD1306::scrollRight(unsigned int start, unsigned int stop) {
-    
+
     deviceI2C->WriteReg8(0x00, SSD1306_RIGHT_HORIZONTAL_SCROLL);
     deviceI2C->WriteReg8(0x00, 0X00);
     deviceI2C->WriteReg8(0x00, start);
@@ -155,7 +165,7 @@ void SSD1306::scrollRight(unsigned int start, unsigned int stop) {
  * @param stop
  */
 void SSD1306::scrollLeft(unsigned int start, unsigned int stop) {
-    
+
     deviceI2C->WriteReg8(0x00, SSD1306_LEFT_HORIZONTAL_SCROLL);
     deviceI2C->WriteReg8(0x00, 0X00);
     deviceI2C->WriteReg8(0x00, start);
@@ -163,10 +173,10 @@ void SSD1306::scrollLeft(unsigned int start, unsigned int stop) {
     deviceI2C->WriteReg8(0x00, stop);
     deviceI2C->WriteReg8(0x00, 0X00);
     deviceI2C->WriteReg8(0x00, 0XFF);
-    deviceI2C->WriteReg8(0x00, SSD1306_ACTIVATE_SCROLL);    
+    deviceI2C->WriteReg8(0x00, SSD1306_ACTIVATE_SCROLL);
 }
 
-void SSD1306::scrollStop(void){
+void SSD1306::scrollStop(void) {
     deviceI2C->WriteReg8(0x00, SSD1306_DEACTIVATE_SCROLL);
 }
 
@@ -335,16 +345,16 @@ void SSD1306::write(const char c) {
 
     int wrap = 1;
     if (c == '\n') {
-        cursor_y += 4 + size * 8;
-        cursor_x = 0;
+        cursor_y += interligne + size * 8;
+        cursor_x = 1;
     } else if (c == '\r') {
         // skip em
     } else {
         drawChar(cursor_x, cursor_y, c, WHITE, size);
         cursor_x += size * 6;
         if (wrap && (cursor_x > (WIDTH - size * 6))) {
-            cursor_y += 4 + size * 8;
-            cursor_x = 0;
+            cursor_y += interligne + size * 8;
+            cursor_x = 1;
         }
     }
 
@@ -373,51 +383,51 @@ void SSD1306::write(const double f) {
     write(ss.str());
 }
 
-SSD1306& SSD1306::operator<<(SSD1306& (*fp)(SSD1306&)){
+SSD1306& SSD1306::operator<<(SSD1306& (*fp)(SSD1306&)) {
     return (*fp)(*this);
 }
 
-SSD1306& SSD1306::operator<<(const std::string& str){
-        
+SSD1306& SSD1306::operator<<(const std::string& str) {
+
     write(str);
     return *this;
 }
 
-SSD1306& SSD1306::operator<<(const int n){
+SSD1306& SSD1306::operator<<(const int n) {
     write(n);
     return *this;
 }
 
-SSD1306& SSD1306::operator<<(const double x){
+SSD1306& SSD1306::operator<<(const double x) {
     write(x);
     return *this;
 }
 
-SSD1306& SSD1306::operator<<(const char c){
+SSD1306& SSD1306::operator<<(const char c) {
     write(c);
     return *this;
 }
 
-SSD1306& SSD1306::operator<<(const char * str){
-    
+SSD1306& SSD1306::operator<<(const char * str) {
+
     write(str);
     return *this;
 }
-    
-SSD1306& SSD1306::operator<<(const bool b){
-    
+
+SSD1306& SSD1306::operator<<(const bool b) {
+
     write(std::to_string(b));
     return *this;
 }
 
-SSD1306& display(SSD1306& sx){
-      
+SSD1306& display(SSD1306& sx) {
+
     sx.display();
     sx.clear();
     return sx;
 }
 
-SSD1306& clear(SSD1306& sx){
+SSD1306& clear(SSD1306& sx) {
     sx.clear();
     return sx;
 }
